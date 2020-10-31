@@ -1,3 +1,5 @@
-import time; #Libreria Tiempo
+import time; #Libreria TIempo
 import threading; #Libreria Hilos
-franco gato
+import threading; #Libreria Hilos
+
+franco del orto 2

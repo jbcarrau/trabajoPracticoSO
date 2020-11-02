@@ -5,6 +5,28 @@ f = open ("procesos.txt" , 'r')
 print (f.read())
 f.close()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # //////////////////////////////////////////////////////////////////
 #                   Comentarios / Consignas para el tp
 

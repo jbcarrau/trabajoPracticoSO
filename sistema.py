@@ -1,8 +1,32 @@
 import time #Libreria Tiempo
 import threading #Libreria Hilos
 
+# Intento prueba de RR // falta usar el Quantum // Faltan datos de los procesos y entrada por TXT entre otras cosas
+n = int (input ("Cuantos procesos son? "))
+tuso = [] #tiempo de uso
+tespera = [0,0,0,0,0,0,0,0,0] # tiempo de espera
+trespuesta = [0,0,0,0,0,0,0,0,0,0] #turn around time
+q = int (input ("Que quantum usar para los procesos? ")) #quantum medidos en segundos
 
+#datos entrada
+for i in range (0,n):
+    tuso.append(int(input(f"Tiempo de uso para el proceso {i} ->")))
 
+# tiempo de espera
+for i in range (1,n):
+    tespera[i] = 0
+    for j in range (0,i):
+        tespera[i] += tuso[i]
+
+#tiempo de respuesta
+for i in range (0,n):
+    trespuesta[i] = tuso[i] + tespera[i]
+
+print ()
+print ("El quantum es de: ", q , "segundos")
+print ("\tProceso\t\tTiempo en uso\t\tTiempo de espera\t\tTurn around time")
+for i in range (0,n):
+    print (f"\t  P[{i}]\t\t\t {tuso[i]}\t\t\t {tespera[i]}\t\t\t\t {trespuesta[i]}")
 
 
 

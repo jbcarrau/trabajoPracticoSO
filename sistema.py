@@ -5,6 +5,8 @@ import threading #Libreria Hilos
 
 
 
+
+
 # //////////////////////////////////////////////////////////////////
 #                   Comentarios / Consignas para el tp
 
@@ -31,4 +33,4 @@ import threading #Libreria Hilos
 
 # Usar funcion time ejemplo
 
-print ('Hoy es -', time.ctime(), time.time())
+# print ('Hoy es -', time.ctime(), time.time())

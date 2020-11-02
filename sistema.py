@@ -1,6 +1,11 @@
 import time #Libreria Tiempo
 import threading #Libreria Hilos
 
+archivo = urllib.urlopen('https://github.com/franbenettini/TrabajoPracticoSO/blob/main/procesos.txt%27')
+print (f.read())
+f.close()
+
+'''
 # Intento prueba de RR // falta usar el Quantum // Faltan datos de los procesos y entrada por TXT entre otras cosas
 n = int (input ("Cuantos procesos son? "))
 tuso = [] #tiempo de uso
@@ -27,7 +32,6 @@ print ("El quantum es de: ", q , "segundos")
 print ("\tProceso\t\tTiempo en uso\t\tTiempo de espera\t\tTurn around time")
 for i in range (0,n):
     print (f"\t  P[{i}]\t\t\t {tuso[i]}\t\t\t {tespera[i]}\t\t\t\t {trespuesta[i]}")
-
 
 
 
@@ -58,3 +62,4 @@ for i in range (0,n):
 # Usar funcion time ejemplo
 
 # print ('Hoy es -', time.ctime(), time.time())
+'''

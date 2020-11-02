@@ -1,7 +1,7 @@
 import time #Libreria Tiempo
 import threading #Libreria Hilos
 
-archivo = urllib.urlopen('https://github.com/franbenettini/TrabajoPracticoSO/blob/main/procesos.txt%27')
+f = open("./procesos.txt", 'r')
 print (f.read())
 f.close()
 

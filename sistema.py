@@ -19,6 +19,7 @@ for i in range (0,n):
 
 
 print (listaProcesos)
+print (listaProcesos[2])
 f.close()
 
 

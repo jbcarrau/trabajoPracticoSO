@@ -1,10 +1,25 @@
 import time #Libreria Tiempo
 import threading #Libreria Hilos
+import sys
 
 f = open ("procesos.txt" , 'r')
-print (f.read())
-f.close()
+listaProcesos = []
+n = (len(f.readlines()))
 
+f = open ("procesos.txt" , 'r')
+
+linea = f.readline()
+for i in range (0,n):
+    pid = linea.split('-')[0]
+    tarribo = linea.split('-')[1]
+    prio = linea.split('-')[2]
+    tprocesador = linea.split('-')[3].strip()
+    listaProcesos.append([pid,tarribo,prio,tprocesador])
+    linea = f.readline()
+
+
+print (listaProcesos)
+f.close()
 
 
 

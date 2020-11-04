@@ -65,6 +65,7 @@ def cargaLista(lista):
     f.close()
 
 
+# MAIN
 listaProcesos = []
 cargaLista(listaProcesos)
 print (listaProcesos)

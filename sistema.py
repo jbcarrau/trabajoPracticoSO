@@ -2,10 +2,10 @@ import time #Libreria Tiempo
 import threading #Libreria Hilos
 import sys
 
-f = open ("procesos.txt" , 'r')
 listaProcesos = []
+f = open ("procesos.txt" , 'r')
 n = (len(f.readlines()))
-
+f.close()
 f = open ("procesos.txt" , 'r')
 
 linea = f.readline()

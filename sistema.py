@@ -1,6 +1,7 @@
 import time #Libreria Tiempo
 import threading #Libreria Hilos
 import sys
+import operator # Libreria para utilizar itemgetter (funcion sorted())
 
 def fcfs():
     print ("Hola estas en el algoritmo fcfs")
@@ -25,6 +26,8 @@ def pedirNumeroEntero():
             print('Error, introduce un numero entero')
     return num
 
+# MENU DEL PROGRAMA
+
 def menu():
     salir = False
     while not salir:
@@ -48,7 +51,9 @@ def menu():
             salir = True
         else:
             print ("Introduce un numero entre 1 y 5")
-   
+
+# LEE EL TXT Y CARGA LA LISTA CON LOS DATOS DE LOS PROCESOS 
+ 
 def cargaLista(lista):
     f = open ("procesos.txt" , 'r')
     n = (len(f.readlines()))
@@ -66,9 +71,13 @@ def cargaLista(lista):
 
 
 # MAIN
+
 listaProcesos = []
 cargaLista(listaProcesos)
 print (listaProcesos)
+print ("Lista ordenada")
+lista = sorted(listaProcesos, reverse = False, key = operator.itemgetter(3)) #ordena por pid y por tprocesador, error con tarribo y prio
+print (lista)
 
 
  

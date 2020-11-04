@@ -2,25 +2,75 @@ import time #Libreria Tiempo
 import threading #Libreria Hilos
 import sys
 
-listaProcesos = []
-f = open ("procesos.txt" , 'r')
-n = (len(f.readlines()))
-f.close()
-f = open ("procesos.txt" , 'r')
+def fcfs():
+    print ("Hola estas en el algoritmo fcfs")
 
-linea = f.readline()
-for i in range (0,n):
-    pid = linea.split('-')[0]
-    tarribo = linea.split('-')[1]
-    prio = linea.split('-')[2]
-    tprocesador = linea.split('-')[3].strip()
-    listaProcesos.append([pid,tarribo,prio,tprocesador])
+def sfj():
+    print ("Hola estas en el algoritmo sfj")
+
+def prioridades():
+    print ("Hola estas en el algoritmo de prioridades")
+
+def rr():
+    print ("Hola estas en el algoritmo Round Robin")
+
+def pedirNumeroEntero():
+    correcto=False
+    num=0
+    while(not correcto):
+        try:
+            num = int(input("Elige una opcion: "))
+            correcto=True
+        except ValueError:
+            print('Error, introduce un numero entero')
+    return num
+
+def menu():
+    salir = False
+    while not salir:
+        print ("1. FCFS")
+        print ("2. SFJ S/ Desalojo")
+        print ("3. Prioridad S/ Desalojo")
+        print ("4. RR")
+        print ("5. Salir")
+    
+        opcion = pedirNumeroEntero()
+    
+        if opcion == 1:
+            fcfs()
+        elif opcion == 2:
+            sfj()
+        elif opcion == 3:
+            prioridades()
+        elif opcion == 4:
+            rr()
+        elif opcion == 5:
+            salir = True
+        else:
+            print ("Introduce un numero entre 1 y 5")
+   
+def cargaLista(lista):
+    f = open ("procesos.txt" , 'r')
+    n = (len(f.readlines()))
+    f.close()
+    f = open ("procesos.txt" , 'r')
     linea = f.readline()
+    for i in range (0,n):
+        pid = linea.split('-')[0]
+        tarribo = linea.split('-')[1]
+        prio = linea.split('-')[2]
+        tprocesador = linea.split('-')[3].strip()
+        listaProcesos.append([pid,tarribo,prio,tprocesador])
+        linea = f.readline()
+    f.close()
 
 
+listaProcesos = []
+cargaLista(listaProcesos)
 print (listaProcesos)
-print (listaProcesos[2])
-f.close()
+
+
+ 
 
 
 

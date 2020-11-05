@@ -76,7 +76,7 @@ listaProcesos = []
 cargaLista(listaProcesos)
 print (listaProcesos)
 print ("Lista ordenada")
-lista = sorted(listaProcesos, reverse = False, key = operator.itemgetter(2)) #ordena por pid y por tprocesador, error con tarribo y prio
+lista = sorted(listaProcesos, reverse = False, key = operator.itemgetter(0)) #ordena por pid y por tprocesador, error con tarribo (Pasar lista a enteros?)
 print (lista)
 
 

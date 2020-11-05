@@ -76,7 +76,7 @@ listaProcesos = []
 cargaLista(listaProcesos)
 print (listaProcesos)
 print ("Lista ordenada")
-lista = sorted(listaProcesos, reverse = False, key = operator.itemgetter(0)) #ordena por pid y por tprocesador, error con tarribo (Pasar lista a enteros?)
+lista = sorted(listaProcesos, reverse = False, key = operator.itemgetter(1)) #ordena pero tiene error con numeros >2 cifras (Pasar lista a enteros?)
 print (lista)
 
 

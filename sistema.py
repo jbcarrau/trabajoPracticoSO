@@ -61,10 +61,10 @@ def cargaLista(lista):
     f = open ("procesos.txt" , 'r')
     linea = f.readline()
     for i in range (0,n):
-        pid = int (linea.split('-')[0])
-        tarribo = int (linea.split('-')[1])
-        prio = int (linea.split('-')[2])
-        tprocesador = int (linea.split('-')[3].strip())
+        pid = linea.split('-')[0]
+        tarribo = int(linea.split('-')[1])
+        prio = int(linea.split('-')[2])
+        tprocesador = int(linea.split('-')[3].strip())
         listaProcesos.append([pid,tarribo,prio,tprocesador])
         linea = f.readline()
     f.close()
@@ -76,7 +76,7 @@ listaProcesos = []
 cargaLista(listaProcesos)
 print (listaProcesos)
 print ("Lista ordenada")
-lista = sorted(listaProcesos, reverse = False, key = operator.itemgetter(2)) #ordena pero tiene error con numeros >2 cifras (Pasar lista a enteros?)
+lista = sorted(listaProcesos, reverse = False, key = operator.itemgetter(1)) #ordena pero tiene error con numeros >2 cifras (Pasar lista a enteros?)
 print (lista)
 
 

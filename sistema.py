@@ -3,6 +3,24 @@ import threading #Libreria Hilos
 import sys
 import operator # Libreria para utilizar itemgetter (funcion sorted())
 
+
+# Crea Clase Proceso y carga los datos del TXT
+class Proceso:
+    pid = 0
+    tarribo = 0
+    prio = 0
+    tprocesador = 0
+    linea = ''
+    arrSplit=[]
+
+    def __init__(self, linea):
+        self.arrSplit = linea.split('-')
+        self.pid = int(self.arrSplit[0])
+        self.tarribo = int(self.arrSplit[1])
+        self.prio = int(self.arrSplit[2])
+        self.tprocesador = int(self.arrSplit[3])
+
+
 def fcfs():
     print ("Hola estas en el algoritmo fcfs")
 
@@ -52,32 +70,92 @@ def menu():
         else:
             print ("Introduce un numero entre 1 y 5")
 
-# LEE EL TXT Y CARGA LA LISTA CON LOS DATOS DE LOS PROCESOS 
- 
-def cargaLista(lista):
-    f = open ("procesos.txt" , 'r')
-    n = (len(f.readlines()))
-    f.close()
-    f = open ("procesos.txt" , 'r')
-    linea = f.readline()
-    for i in range (0,n):
-        pid = linea.split('-')[0]
-        tarribo = int(linea.split('-')[1])
-        prio = int(linea.split('-')[2])
-        tprocesador = int(linea.split('-')[3].strip())
-        listaProcesos.append([pid,tarribo,prio,tprocesador])
-        linea = f.readline()
-    f.close()
-
-
 # MAIN
 
 listaProcesos = []
-cargaLista(listaProcesos)
-print (listaProcesos)
-print ("Lista ordenada")
-lista = sorted(listaProcesos, reverse = False, key = operator.itemgetter(2)) #ordena pero tiene error con numeros >2 cifras (Pasar lista a enteros?)
-print (lista)
+listaPid = []
+listatarribo = []
+listaprio = []
+listatprocesador = []
+
+# Asigna valor al n
+
+f = open ("procesos.txt" , 'r')
+n = (len(f.readlines()))
+f.close()
+
+f = open ("procesos.txt" , 'r')
+
+linea = f.readline()
+
+for i in range (0,n):
+    listaProcesos.append(Proceso(linea))
+    linea = f.readline()
+
+f.close()
+
+for x in range (0,len(listaProcesos)):
+    z = listaProcesos[x]
+    print(z.pid,z.tarribo,z.prio,z.tprocesador)
+
+
+
+
+
+
+
+
+
+# MUESTRA
+## ORDENACION POR PID
+listaPid = sorted(listaProcesos, key=lambda m:m.pid)
+
+print("Orden de procesos por pid(primera columna): ")
+for x in range (0,len(listaPid)):
+    z =listaPid[x]
+    print(z.pid, z.tarribo, z.prio, z.tprocesador)
+
+print("--deberia ser 1 3 6--------------")
+
+print()
+print("----------------")
+
+## ORDENACION POR TIEMPO DE ARRIBO
+listatarribo = sorted(listaProcesos, key=lambda m:m.tarribo)
+
+print("Orden de procesos por tarribo (segunda columna): ")
+for x in range (0,len(listatarribo)):
+    z =listatarribo[x]
+    print(z.pid, z.tarribo, z.prio, z.tprocesador)
+
+print("--deberia ser 3 1 6--------------")
+
+print()
+print("----------------")
+
+## ORDENACION POR PRIORIDAD
+listaprio = sorted(listaProcesos, key=lambda m:m.prio)
+
+print("Orden de procesos por prio (tercera columna): ")
+for x in range (0,len(listaprio)):
+    z =listaprio[x]
+    print(z.pid, z.tarribo, z.prio, z.tprocesador)
+
+print("--deberia ser 6 3 1--------------")
+
+print()
+print("----------------")
+
+## ORDENACION POR TIEMPO DE PROCESADOR
+listatprocesador = sorted(listaProcesos, key=lambda m:m.tprocesador)
+
+print("Orden de procesos por tprocesador (cuarta columna): ")
+for x in range (0,len(listatprocesador)):
+
+    print(listatprocesador[x].pid, listatprocesador[x].tarribo, listatprocesador[x].prio, listatprocesador[x].tprocesador)
+
+print("--deberia ser 1 6 3--------------")
+
 
 
  

@@ -2,9 +2,10 @@ import time #Libreria Tiempo
 import threading #Libreria Hilos
 import sys
 import operator # Libreria para utilizar itemgetter (funcion sorted())
+from time import sleep # funcion sleep
 
 
-# Crea Clase Proceso y carga los datos del TXT
+# Crea Clase Proceso
 class Proceso:
     pid = 0
     tarribo = 0
@@ -22,16 +23,80 @@ class Proceso:
 
 
 def fcfs():
-    print ("Hola estas en el algoritmo fcfs")
+    print ("Algoritmo FCFS \n")
+    lista = sorted(listaProcesos, key=lambda m:m.tarribo)
+
+    # FCFS?
+    for x in range (0,len(lista)):
+        z = lista[x]
+        print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+        print ('El proceso ',z.pid ,'se esta ejecutando ...')
+        print ()
+        time.sleep (z.tprocesador)
+        print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
+        print ('\n ---------------------------------------------------- \n')
 
 def sfj():
-    print ("Hola estas en el algoritmo sfj")
+    print ("Algoritmo SFJ \n")
+    lista = sorted(listaProcesos, key=lambda m:m.tprocesador)
+
+    for x in range (0,len(lista)):
+        z = lista[x]
+        print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+        print ('El proceso ',z.pid ,'se esta ejecutando ...')
+        print ()
+        time.sleep (z.tprocesador)
+        print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
+        print ('\n ---------------------------------------------------- \n')
+
 
 def prioridades():
-    print ("Hola estas en el algoritmo de prioridades")
+    print ("Algoritmo Prioridades : \n")
+    lista = sorted(listaProcesos, key=lambda m:m.prio)
+
+    for x in range (0,len(lista)):
+        z = lista[x]
+        print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+        print ('El proceso ',z.pid ,'se esta ejecutando ...')
+        print ()
+        time.sleep (z.tprocesador)
+        print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
+        print ('\n ---------------------------------------------------- \n')
+
+
 
 def rr():
-    print ("Hola estas en el algoritmo Round Robin")
+    print ("Algoritmo RR \n")
+    lista = sorted(listaProcesos, key=lambda m:m.tarribo)
+
+    ## ORDENACION POR TIEMPO DE ARRIBO
+    listatarribo = sorted(listaProcesos, key=lambda m:m.tarribo)
+
+    print("Orden de procesos por tarribo (segunda columna): ")
+    for x in range (0,len(listatarribo)):
+        z =listatarribo[x]
+        print(z.pid, z.tarribo, z.prio, z.tprocesador)
+
+    print("--deberia ser 3 1 6 7 9--")
+
+    q = int(input("Elige un Quantum: "))
+    # FCFS?
+    while len(lista) != 0:
+        z = lista.pop(0)
+        print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+        print ('El proceso ',z.pid ,'se esta ejecutando ... Tiene un tiempo de ',z.tprocesador, ' segundos')
+        if q >= z.tprocesador:
+            time.sleep (z.tprocesador)
+            print ('El proceso ',z.pid, ' termino su ejecucion ... a las ', time.strftime("%H:%M:%S") )
+        else:
+            time.sleep (q)
+            z.tprocesador -=  q
+            lista.append(z)
+            print ('El proceso ', z.pid , 'Le queda ',z.tprocesador, ' segundos') 
+        print ('\n ---------------------------------------------------- \n')
+
+
+        
 
 def pedirNumeroEntero():
     correcto=False
@@ -70,6 +135,24 @@ def menu():
         else:
             print ("Introduce un numero entre 1 y 5")
 
+# CARGA EL TXT
+def cargaProcesos():
+    
+    # Asigna valor al n
+    f = open ("procesos.txt" , 'r')
+    n = (len(f.readlines()))
+    f.close()
+
+    # Llena la clase proceso con valores del TXT
+
+    f = open ("procesos.txt" , 'r')
+    linea = f.readline()
+    for i in range (0,n):
+        listaProcesos.append(Proceso(linea))
+        linea = f.readline()
+    f.close()
+
+
 # MAIN
 
 listaProcesos = []
@@ -78,35 +161,17 @@ listatarribo = []
 listaprio = []
 listatprocesador = []
 
-# Asigna valor al n
 
-f = open ("procesos.txt" , 'r')
-n = (len(f.readlines()))
-f.close()
+cargaProcesos()
+menu ()
 
-f = open ("procesos.txt" , 'r')
-
-linea = f.readline()
-
-for i in range (0,n):
-    listaProcesos.append(Proceso(linea))
-    linea = f.readline()
-
-f.close()
-
+'''
+# MUESTRA
+# Lista completa sin orden
 for x in range (0,len(listaProcesos)):
     z = listaProcesos[x]
     print(z.pid,z.tarribo,z.prio,z.tprocesador)
 
-
-
-
-
-
-
-
-
-# MUESTRA
 ## ORDENACION POR PID
 listaPid = sorted(listaProcesos, key=lambda m:m.pid)
 
@@ -154,7 +219,7 @@ for x in range (0,len(listatprocesador)):
 
     print(listatprocesador[x].pid, listatprocesador[x].tarribo, listatprocesador[x].prio, listatprocesador[x].tprocesador)
 
-print("--deberia ser 1 6 3--------------")
+print("--deberia ser 1 6 3--------------")  '''
 
 
 

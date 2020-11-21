@@ -3,6 +3,27 @@ import threading #Libreria Hilos
 import sys
 import operator # Libreria para utilizar itemgetter (funcion sorted())
 from time import sleep # funcion sleep
+from operator import itemgetter, attrgetter
+from optparse import OptionParser
+
+usage = "usage: %prog [options] arg"
+parser = OptionParser(usage=usage)
+
+a_choices = ["fcfs", "sfj", "prioridades", "rr"]
+parser.add_option("-a", "--algorithm",
+                  action="store", type="choice", choices=a_choices, dest="name", 
+                  help = "Define the scheduling method by picking an algorithm of your choice")
+
+parser.add_option("-q", "--quantum", 
+                  action="store", type="int", dest="quantum", 
+                  help = "Execution Quantum time. Choose wiseley")
+                  
+# parser.add_option("-t", "--threads", 
+#                   action="store", type="int", dest="")
+
+(options, args) = parser.parse_args()
+if len(args) != 0:
+        parser.error("incorrect number of arguments")
 
 
 # Crea Clase Proceso
@@ -38,7 +59,7 @@ def fcfs():
 
 def sfj():
     print ("Algoritmo SFJ \n")
-    lista = sorted(listaProcesos, key=lambda m:m.tprocesador)
+    lista = sorted(listaProcesos, key=attrgetter('tprocesador', 'tarribo'))
 
     for x in range (0,len(lista)):
         z = lista[x]
@@ -52,7 +73,7 @@ def sfj():
 
 def prioridades():
     print ("Algoritmo Prioridades : \n")
-    lista = sorted(listaProcesos, key=lambda m:m.prio)
+    lista = sorted(listaProcesos, key=attrgetter('prio', 'tarribo'))
 
     for x in range (0,len(lista)):
         z = lista[x]
@@ -79,7 +100,7 @@ def rr():
 
     print("--deberia ser 3 1 6 7 9--")
 
-    q = int(input("Elige un Quantum: "))
+    q = options.quantum
     # FCFS?
     while len(lista) != 0:
         z = lista.pop(0)
@@ -95,45 +116,6 @@ def rr():
             print ('El proceso ', z.pid , 'Le queda ',z.tprocesador, ' segundos') 
         print ('\n ---------------------------------------------------- \n')
 
-
-        
-
-def pedirNumeroEntero():
-    correcto=False
-    num=0
-    while(not correcto):
-        try:
-            num = int(input("Elige una opcion: "))
-            correcto=True
-        except ValueError:
-            print('Error, introduce un numero entero')
-    return num
-
-# MENU DEL PROGRAMA
-
-def menu():
-    salir = False
-    while not salir:
-        print ("1. FCFS")
-        print ("2. SFJ S/ Desalojo")
-        print ("3. Prioridad S/ Desalojo")
-        print ("4. RR")
-        print ("5. Salir")
-    
-        opcion = pedirNumeroEntero()
-    
-        if opcion == 1:
-            fcfs()
-        elif opcion == 2:
-            sfj()
-        elif opcion == 3:
-            prioridades()
-        elif opcion == 4:
-            rr()
-        elif opcion == 5:
-            salir = True
-        else:
-            print ("Introduce un numero entre 1 y 5")
 
 # CARGA EL TXT
 def cargaProcesos():
@@ -161,115 +143,13 @@ listatarribo = []
 listaprio = []
 listatprocesador = []
 
-
 cargaProcesos()
-menu ()
 
-'''
-# MUESTRA
-# Lista completa sin orden
-for x in range (0,len(listaProcesos)):
-    z = listaProcesos[x]
-    print(z.pid,z.tarribo,z.prio,z.tprocesador)
-
-## ORDENACION POR PID
-listaPid = sorted(listaProcesos, key=lambda m:m.pid)
-
-print("Orden de procesos por pid(primera columna): ")
-for x in range (0,len(listaPid)):
-    z =listaPid[x]
-    print(z.pid, z.tarribo, z.prio, z.tprocesador)
-
-print("--deberia ser 1 3 6--------------")
-
-print()
-print("----------------")
-
-## ORDENACION POR TIEMPO DE ARRIBO
-listatarribo = sorted(listaProcesos, key=lambda m:m.tarribo)
-
-print("Orden de procesos por tarribo (segunda columna): ")
-for x in range (0,len(listatarribo)):
-    z =listatarribo[x]
-    print(z.pid, z.tarribo, z.prio, z.tprocesador)
-
-print("--deberia ser 3 1 6--------------")
-
-print()
-print("----------------")
-
-## ORDENACION POR PRIORIDAD
-listaprio = sorted(listaProcesos, key=lambda m:m.prio)
-
-print("Orden de procesos por prio (tercera columna): ")
-for x in range (0,len(listaprio)):
-    z =listaprio[x]
-    print(z.pid, z.tarribo, z.prio, z.tprocesador)
-
-print("--deberia ser 6 3 1--------------")
-
-print()
-print("----------------")
-
-## ORDENACION POR TIEMPO DE PROCESADOR
-listatprocesador = sorted(listaProcesos, key=lambda m:m.tprocesador)
-
-print("Orden de procesos por tprocesador (cuarta columna): ")
-for x in range (0,len(listatprocesador)):
-
-    print(listatprocesador[x].pid, listatprocesador[x].tarribo, listatprocesador[x].prio, listatprocesador[x].tprocesador)
-
-print("--deberia ser 1 6 3--------------")  '''
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# //////////////////////////////////////////////////////////////////
-#                   Comentarios / Consignas para el tp
-
-
-# Requisitos Generales
-
-# - No se desarrollarán interfaces de usuario, el programa se ejecuta desde la terminal
-# - La configuración del sistema operativo a simular se indica a través de flags o parámetros del sistema.
-# - Los resultados de la simulación deben imprimirse por pantalla y además guardarse en un archivo.
-# - Aquellas cuestiones no especificadas explícitamente, quedan a consideración del alumno.
-
-# Requisitos Simulacion
-
-# - Todos los tiempos se miden en segundos. // quantum
-# - La memoria es infinita.
-# - Ante cualquier conflicto entre procesos (por ejemplo, dos con igual prioridad) se debe dar prioridad según FCFS.
-# - La prioridad 1 es la mayor y la N es la menor.
-# - No se realizan llamadas al sistema por I/O de un proceso.
-# - Se desconoce (no se requiere) la propiedad usuario de los procesos.
-# - Los procesos del sistema operativo a simular se identifican por un código y cuentan con una serie de atributos.
-# Estos valores se ingresan al sistema por medio de un archivo de extensión txt cuyo nombre se debe solicitar al inicio 
-# de la ejecución delsimulador.
-# - Si se están utilizando threads, los mismos podrán acceder al archivo de procesos o imprimir la terminal de a uno.
-
-# Usar funcion time ejemplo
-
-# print ('Hoy es -', time.ctime(), time.time())
+if options.name == "fcfs":
+    fcfs()
+elif options.name == "sfj":
+    sfj()
+elif options.name == "prioridades":
+    prioridades()
+elif options.name == "rr":
+    rr()

@@ -91,11 +91,10 @@ def rr():
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)
 
     ## ORDENACION POR TIEMPO DE ARRIBO
-    listatarribo = sorted(listaProcesos, key=lambda m:m.tarribo)
 
     print("Orden de procesos por tarribo (segunda columna): ")
-    for x in range (0,len(listatarribo)):
-        z =listatarribo[x]
+    for x in range (0,len(lista)):
+        z =lista[x]
         print(z.pid, z.tarribo, z.prio, z.tprocesador)
 
     print("--deberia ser 3 1 6 7 9--")
@@ -138,10 +137,10 @@ def cargaProcesos():
 # MAIN
 
 listaProcesos = []
-listaPid = []
-listatarribo = []
-listaprio = []
-listatprocesador = []
+# listaPid = []
+# listatarribo = []
+# listaprio = []
+# listatprocesador = []
 
 cargaProcesos()
 

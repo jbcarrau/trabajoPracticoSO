@@ -42,7 +42,6 @@ class Proceso:
         self.prio = int(self.arrSplit[2])
         self.tprocesador = int(self.arrSplit[3])
 
-
 def fcfs():
     print ("Algoritmo FCFS \n")
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)
@@ -51,11 +50,16 @@ def fcfs():
     for x in range (0,len(lista)):
         z = lista[x]
         print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+        tInicio = time.time()
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
         time.sleep (z.tprocesador)
         print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
+        tFinal = time.time()
+        tTurnaround = (int)(tFinal - tInicio)
         print ('\n ---------------------------------------------------- \n')
+        print ("Tiempo de turnaround : ", tTurnaround , " Segundos")
+        #generarReporteProcesos()
 
 def sfj():
     print ("Algoritmo SFJ \n")

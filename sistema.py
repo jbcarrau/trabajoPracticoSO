@@ -49,7 +49,8 @@ def fcfs():
     print ("Algoritmo FCFS \n")
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)
     # FCFS?
-    tEsperaCola = 0
+    t = lista[0].tarribo
+    procesador_ocupado = 0
     for x in range (0,len(lista)):
         z = lista[x]
         #print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
@@ -60,13 +61,14 @@ def fcfs():
         print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
         tFinal = time.time()
         tTurnaround = (int)(tFinal - tInicio)
-        if tEsperaCola == 0:
-            t = 0
+        if procesador_ocupado == 0:
+            tEsperaCola = 0
         else:
-            t = tEsperaCola - z.tarribo
-        tEsperaCola += (tTurnaround)
+            tEsperaCola = t - z.tarribo
+        t += (tTurnaround)
+        procesador_ocupado = 1
         print ('\n ---------------------------------------------------- \n')
-        listaProcesosReporte.append([z.pid,tTurnaround,t])
+        listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola])
     generarReporteProcesos(listaProcesosReporte)
 
 def sfj():

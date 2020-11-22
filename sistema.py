@@ -17,6 +17,8 @@ parser.add_option("-a", "--algorithm",
 parser.add_option("-q", "--quantum", 
                   action="store", type="int", dest="quantum", 
                   help = "Execution Quantum time. Choose wiseley")
+
+
                   
 # parser.add_option("-t", "--threads", 
 #                   action="store", type="int", dest="")
@@ -42,14 +44,15 @@ class Proceso:
         self.prio = int(self.arrSplit[2])
         self.tprocesador = int(self.arrSplit[3])
 
+# Funciones de los algoritmos
 def fcfs():
     print ("Algoritmo FCFS \n")
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)
-
     # FCFS?
+    tEsperaCola = 0
     for x in range (0,len(lista)):
         z = lista[x]
-        print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+        #print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
         tInicio = time.time()
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
@@ -57,9 +60,14 @@ def fcfs():
         print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
         tFinal = time.time()
         tTurnaround = (int)(tFinal - tInicio)
+        if tEsperaCola == 0:
+            t = 0
+        else:
+            t = tEsperaCola - z.tarribo
+        tEsperaCola += (tTurnaround)
         print ('\n ---------------------------------------------------- \n')
-        listaProcesosReporte.append([z.pid,tTurnaround])
-
+        listaProcesosReporte.append([z.pid,tTurnaround,t])
+    generarReporteProcesos(listaProcesosReporte)
 
 def sfj():
     print ("Algoritmo SFJ \n")
@@ -104,7 +112,6 @@ def rr():
     print("--deberia ser 3 1 6 7 9--")
 
     q = options.quantum
-    # FCFS?
     while len(lista) != 0:
         z = lista.pop(0)
         print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
@@ -119,6 +126,15 @@ def rr():
             print ('El proceso ', z.pid , 'Le queda ',z.tprocesador, ' segundos') 
         print ('\n ---------------------------------------------------- \n')
 
+# Funciones de los reportes
+
+def generarReporteProcesos(listar):
+    if (len(listar) != 0):
+        print ("PID Proceso ", "Tiempo de Turnaround", "Tiempo de espera en cola de listos", "Tiempo de espera Total de cada proceso", "Tiempo de Respuesta", "Tiempo Total de uso de procesador")
+        for x in range (0,len(listar)):
+            print (listar[x][0],"\t\t\t", listar[x][1],"\t\t\t", listar[x][2], "\n")
+    else:
+        print ("No hay datos")
 
 # CARGA EL TXT
 def cargaProcesos():

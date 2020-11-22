@@ -58,8 +58,8 @@ def fcfs():
         tFinal = time.time()
         tTurnaround = (int)(tFinal - tInicio)
         print ('\n ---------------------------------------------------- \n')
-        print ("Tiempo de turnaround : ", tTurnaround , " Segundos")
-        #generarReporteProcesos()
+        listaProcesosReporte.append([z.pid,tTurnaround])
+
 
 def sfj():
     print ("Algoritmo SFJ \n")
@@ -141,10 +141,7 @@ def cargaProcesos():
 # MAIN
 
 listaProcesos = []
-# listaPid = []
-# listatarribo = []
-# listaprio = []
-# listatprocesador = []
+listaProcesosReporte = []
 
 cargaProcesos()
 

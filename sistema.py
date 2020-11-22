@@ -66,6 +66,9 @@ def fcfs():
         else:
             tEsperaCola = t - z.tarribo
         t += (tTurnaround)
+        #tEsperaTotal = tEsperaCola + ??
+        #tRespuesta = ??
+        #TiempoTotalUsoP = z.tprocesador ?
         procesador_ocupado = 1
         print ('\n ---------------------------------------------------- \n')
         listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola])
@@ -83,6 +86,7 @@ def sfj():
         time.sleep (z.tprocesador)
         print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
         print ('\n ---------------------------------------------------- \n')
+    #generarReporteProcesos(listaProcesosReporte)
 
 
 def prioridades():
@@ -97,6 +101,7 @@ def prioridades():
         time.sleep (z.tprocesador)
         print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
         print ('\n ---------------------------------------------------- \n')
+    #generarReporteProcesos(listaProcesosReporte)
 
 
 
@@ -127,6 +132,7 @@ def rr():
             lista.append(z)
             print ('El proceso ', z.pid , 'Le queda ',z.tprocesador, ' segundos') 
         print ('\n ---------------------------------------------------- \n')
+    #generarReporteProcesos(listaProcesosReporte)
 
 # Funciones de los reportes
 

@@ -66,12 +66,12 @@ def fcfs():
         else:
             tEsperaCola = t - z.tarribo
         t += (tTurnaround)
-        #tEsperaTotal = tEsperaCola + ??
-        #tRespuesta = ??
-        #TiempoTotalUsoP = z.tprocesador ?
+        tEsperaTotal = tEsperaCola # No se utilizan I/O entonces los datos que necesitan finalizacion de I/O es hasta finalizacion de proceso
+        tRespuesta = t - z.tarribo # finalizacion primer I/O - tiempo de arribo // => finalizacion proceso - tiempo de arribo
+        tTotalUsoP = z.tprocesador # El tiempo total que el proceso tomo uso del procesador
         procesador_ocupado = 1
         print ('\n ---------------------------------------------------- \n')
-        listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola])
+        listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
     generarReporteProcesos(listaProcesosReporte)
 
 def sfj():
@@ -138,9 +138,9 @@ def rr():
 
 def generarReporteProcesos(listar):
     if (len(listar) != 0):
-        print ("PID Proceso ", "Tiempo de Turnaround", "Tiempo de espera en cola de listos", "Tiempo de espera Total de cada proceso", "Tiempo de Respuesta", "Tiempo Total de uso de procesador")
+        print (" PID Proceso |||", "Tiempo de Turnaround |||", "Tiempo de espera en cola de listos |||", "Tiempo de espera Total de cada proceso |||", "Tiempo de Respuesta |||", "Tiempo Total de uso de procesador")
         for x in range (0,len(listar)):
-            print (listar[x][0],"\t\t\t", listar[x][1],"\t\t\t", listar[x][2], "\n")
+            print ("  ", listar[x][0],"\t\t\t", listar[x][1],"\t\t\t\t", listar[x][2],"\t\t\t\t\t", listar[x][3],"\t\t\t\t  ", listar[x][4],"\t\t\t\t", listar[x][5],"\n")
     else:
         print ("No hay datos")
 

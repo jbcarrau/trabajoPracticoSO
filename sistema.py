@@ -53,6 +53,11 @@ def fcfs(): #El primero que entra, el primero que sale. Se ejecuta el primero en
     print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     for x in range (0,len(lista)):
         z = lista[x]
+        if procesador_ocupado == 0:
+            tEsperaCola = 0
+        else:
+            tEsperaCola = t - z.tarribo
+        procesador_ocupado = 1
         tInicio = time.time()
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
@@ -60,15 +65,10 @@ def fcfs(): #El primero que entra, el primero que sale. Se ejecuta el primero en
         print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
         tFinal = time.time()
         tTurnaround = (int)(tFinal - tInicio)
-        if procesador_ocupado == 0:
-            tEsperaCola = 0
-        else:
-            tEsperaCola = t - z.tarribo
         t += (tTurnaround)
         tEsperaTotal = tEsperaCola # No se utilizan I/O entonces los datos que necesitan finalizacion de I/O es hasta finalizacion de proceso
         tRespuesta = t - z.tarribo # finalizacion primer I/O - tiempo de arribo // => finalizacion proceso - tiempo de arribo
         tTotalUsoP = z.tprocesador # El tiempo total que el proceso tomo uso del procesador
-        procesador_ocupado = 1
         print ('\n ---------------------------------------------------- \n')
         listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
     generarReporteProcesos(listaProcesosReporte)
@@ -81,6 +81,11 @@ def sfj(): #Tiene prioridad el de ciclo de CPU mas corto
     print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     while len(lista) != 0:
         z = lista.pop(0)
+        if procesador_ocupado == 0:
+            tEsperaCola = 0
+        else:
+            tEsperaCola = t - z.tarribo
+        procesador_ocupado = 1
         tInicio = time.time()
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
@@ -88,15 +93,10 @@ def sfj(): #Tiene prioridad el de ciclo de CPU mas corto
         print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
         tFinal = time.time()
         tTurnaround = (int)(tFinal - tInicio)
-        if procesador_ocupado == 0:
-            tEsperaCola = 0
-        else:
-            tEsperaCola = t - z.tarribo
         t += (tTurnaround)
         tEsperaTotal = tEsperaCola
         tRespuesta = t - z.tarribo 
         tTotalUsoP = z.tprocesador
-        procesador_ocupado = 1
         print ('\n ---------------------------------------------------- \n')
         listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
         lista = sorted(lista, key=lambda m:m.tprocesador)
@@ -111,36 +111,34 @@ def prioridades(): # Se ordena por prioridad del proceso
     print ("\n Algoritmo Prioridades : \n")
     lista = sorted(listaProcesos, key=attrgetter('tarribo', 'prio'))
     t = lista[0].tarribo
-    procesador_ocupado = 0
+    procesador_ocupado = 0 # 1 ocupado 0 desocupado
     print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     while len(lista) != 0:
         z = lista.pop(0)
         tInicio = time.time()
+        if procesador_ocupado == 0:
+            tEsperaCola = 0
+        else:
+            tEsperaCola = t - z.tarribo
+        procesador_ocupado = 1
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
         time.sleep (z.tprocesador)
         print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
         tFinal = time.time()
         tTurnaround = (int)(tFinal - tInicio)
-        if procesador_ocupado == 0:
-            tEsperaCola = 0
-        else:
-            tEsperaCola = t - z.tarribo
         t += (tTurnaround)
         tEsperaTotal = tEsperaCola
         tRespuesta = t - z.tarribo 
         tTotalUsoP = z.tprocesador
-        procesador_ocupado = 1
         print ('\n ---------------------------------------------------- \n')
         listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
         lista = sorted(lista, key=lambda m:m.prio)
-        while (z.tarribo > t): # si TODOS los tiempos de arribo son mayores, va a ciclar infinito
+        while (len(lista) != 0 and z.tarribo >= t ): # si TODOS los tiempos de arribo son mayores, va a ciclar infinito
             x = z
             z = lista.pop(0)
             lista.append(x)
     generarReporteProcesos(listaProcesosReporte)
-
-
 
 def rr():
     print ("Algoritmo RR \n")

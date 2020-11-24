@@ -100,7 +100,7 @@ def sfj(): #Tiene prioridad el de ciclo de CPU mas corto
         print ('\n ---------------------------------------------------- \n')
         listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
         lista = sorted(lista, key=lambda m:m.tprocesador)
-        while (z.tarribo > t): # si TODOS los tiempos de arribo son mayores, va a ciclar infinito
+        while (len(lista) != 0 and z.tarribo >= t ):
             x = z
             z = lista.pop(0)
             lista.append(x)
@@ -134,7 +134,7 @@ def prioridades(): # Se ordena por prioridad del proceso
         print ('\n ---------------------------------------------------- \n')
         listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
         lista = sorted(lista, key=lambda m:m.prio)
-        while (len(lista) != 0 and z.tarribo >= t ): # si TODOS los tiempos de arribo son mayores, va a ciclar infinito
+        while (len(lista) != 0 and z.tarribo >= t ):
             x = z
             z = lista.pop(0)
             lista.append(x)

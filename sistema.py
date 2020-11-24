@@ -44,7 +44,7 @@ class Proceso:
         self.prio = int(self.arrSplit[2])
         self.tprocesador = int(self.arrSplit[3])
 
-# Funciones de los algoritmos (Procesos)
+# Funciones de los algoritmos (Procesos) funcionan a tiempo real
 def fcfs(): #El primero que entra, el primero que sale. Se ejecuta el primero en llegar y los demas a medida que llegan estan en una cola.
     print ("\n Algoritmo FCFS \n")
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)

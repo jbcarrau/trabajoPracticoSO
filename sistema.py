@@ -44,7 +44,7 @@ class Proceso:
         self.prio = int(self.arrSplit[2])
         self.tprocesador = int(self.arrSplit[3])
 
-# Funciones de los algoritmos
+# Funciones de los algoritmos (Procesos)
 def fcfs():
     print ("Algoritmo FCFS \n")
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)
@@ -133,14 +133,32 @@ def rr():
             print ('El proceso ', z.pid , 'Le queda ',z.tprocesador, ' segundos') 
         print ('\n ---------------------------------------------------- \n')
     #generarReporteProcesos(listaProcesosReporte)
+    
+# Funcion Hilos (RR)
+
+
 
 # Funciones de los reportes
 
 def generarReporteProcesos(listar):
     if (len(listar) != 0):
-        print (" PID Proceso |||", "Tiempo de Turnaround |||", "Tiempo de espera en cola de listos |||", "Tiempo de espera Total de cada proceso |||", "Tiempo de Respuesta |||", "Tiempo Total de uso de procesador")
+        file = open("../TrabajoPracticoSO/reporteProcesos.txt", "w")
+        file.write(" PID Proceso ||| Tiempo de Turnaround ||| Tiempo de espera en cola de listos ||| Tiempo de espera Total de cada proceso ||| Tiempo de Respuesta ||| Tiempo Total de uso de procesador \n")
         for x in range (0,len(listar)):
-            print ("  ", listar[x][0],"\t\t\t", listar[x][1],"\t\t\t\t", listar[x][2],"\t\t\t\t\t", listar[x][3],"\t\t\t\t  ", listar[x][4],"\t\t\t\t", listar[x][5],"\n")
+            file.write ("\t")
+            file.write(str(listar[x][0]))
+            file.write ("\t\t\t")
+            file.write(str(listar[x][1]))
+            file.write ("\t\t\t\t")
+            file.write(str(listar[x][2]))
+            file.write ("\t\t\t\t\t")
+            file.write(str(listar[x][3]))
+            file.write ("\t\t\t\t")
+            file.write(str(listar[x][4]))
+            file.write ("\t\t\t\t")
+            file.write(str(listar[x][5]))
+            file.write ("\n")
+        file.close()
     else:
         print ("No hay datos")
 

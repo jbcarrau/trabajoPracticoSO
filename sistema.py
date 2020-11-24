@@ -100,11 +100,11 @@ def sfj(): #Tiene prioridad el de ciclo de CPU mas corto
         procesador_ocupado = 1
         print ('\n ---------------------------------------------------- \n')
         listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
-        lista = sorted(listaProcesos, key=lambda m:m.tprocesador)
-       # while (z.tarribo > t):
-        #    x = z
-         #   z = lista.pop(0)
-          #  lista.append(x)
+        lista = sorted(lista, key=lambda m:m.tprocesador)
+        while (z.tarribo > t):
+            x = z
+            z = lista.pop(0)
+            lista.append(x)
     generarReporteProcesos(listaProcesosReporte)
 
 

@@ -46,7 +46,7 @@ class Proceso:
 
 # Funciones de los algoritmos (Procesos)
 def fcfs(): #El primero que entra, el primero que sale. Se ejecuta el primero en llegar y los demas a medida que llegan estan en una cola.
-    print ("Algoritmo FCFS \n")
+    print ("\n Algoritmo FCFS \n")
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)
     t = lista[0].tarribo
     procesador_ocupado = 0
@@ -74,12 +74,11 @@ def fcfs(): #El primero que entra, el primero que sale. Se ejecuta el primero en
     generarReporteProcesos(listaProcesosReporte)
 
 def sfj(): #Tiene prioridad el de ciclo de CPU mas corto
-    print ("Algoritmo SFJ \n")
+    print ("\n Algoritmo SFJ \n")
     lista = sorted(listaProcesos, key=attrgetter('tarribo', 'tprocesador'))
     t = lista[0].tarribo
     procesador_ocupado = 0
     print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
-    
     while len(lista) != 0:
         z = lista.pop(0)
         tInicio = time.time()
@@ -109,13 +108,13 @@ def sfj(): #Tiene prioridad el de ciclo de CPU mas corto
 
 
 def prioridades(): # Se ordena por prioridad del proceso
-    print ("Algoritmo Prioridades : \n")
-    lista = sorted(listaProcesos, key=attrgetter('prio', 'tarribo'))
+    print ("\n Algoritmo Prioridades : \n")
+    lista = sorted(listaProcesos, key=attrgetter('tarribo', 'prio'))
     t = lista[0].tarribo
     procesador_ocupado = 0
     print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
-    for x in range (0,len(lista)):
-        z = lista[x]
+    while len(lista) != 0:
+        z = lista.pop(0)
         tInicio = time.time()
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
@@ -134,6 +133,11 @@ def prioridades(): # Se ordena por prioridad del proceso
         procesador_ocupado = 1
         print ('\n ---------------------------------------------------- \n')
         listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
+        lista = sorted(lista, key=lambda m:m.prio)
+        while (z.tarribo > t): # si TODOS los tiempos de arribo son mayores, va a ciclar infinito
+            x = z
+            z = lista.pop(0)
+            lista.append(x)
     generarReporteProcesos(listaProcesosReporte)
 
 

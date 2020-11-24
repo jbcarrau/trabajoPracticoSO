@@ -45,15 +45,14 @@ class Proceso:
         self.tprocesador = int(self.arrSplit[3])
 
 # Funciones de los algoritmos (Procesos)
-def fcfs():
+def fcfs(): #El primero que entra, el primero que sale. Se ejecuta el primero en llegar y los demas a medida que llegan estan en una cola.
     print ("Algoritmo FCFS \n")
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)
-    # FCFS?
     t = lista[0].tarribo
     procesador_ocupado = 0
+    print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     for x in range (0,len(lista)):
         z = lista[x]
-        #print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
         tInicio = time.time()
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
@@ -74,34 +73,68 @@ def fcfs():
         listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
     generarReporteProcesos(listaProcesosReporte)
 
-def sfj():
+def sfj(): #Tiene prioridad el de ciclo de CPU mas corto
     print ("Algoritmo SFJ \n")
-    lista = sorted(listaProcesos, key=attrgetter('tprocesador', 'tarribo'))
-
-    for x in range (0,len(lista)):
-        z = lista[x]
-        print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+    lista = sorted(listaProcesos, key=attrgetter('tarribo', 'tprocesador'))
+    t = lista[0].tarribo
+    procesador_ocupado = 0
+    print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+    
+    while len(lista) != 0:
+        z = lista.pop(0)
+        tInicio = time.time()
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
         time.sleep (z.tprocesador)
         print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
+        tFinal = time.time()
+        tTurnaround = (int)(tFinal - tInicio)
+        if procesador_ocupado == 0:
+            tEsperaCola = 0
+        else:
+            tEsperaCola = t - z.tarribo
+        t += (tTurnaround)
+        tEsperaTotal = tEsperaCola
+        tRespuesta = t - z.tarribo 
+        tTotalUsoP = z.tprocesador
+        procesador_ocupado = 1
         print ('\n ---------------------------------------------------- \n')
-    #generarReporteProcesos(listaProcesosReporte)
+        listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
+        lista = sorted(listaProcesos, key=lambda m:m.tprocesador)
+       # while (z.tarribo > t):
+        #    x = z
+         #   z = lista.pop(0)
+          #  lista.append(x)
+    generarReporteProcesos(listaProcesosReporte)
 
 
-def prioridades():
+def prioridades(): # Se ordena por prioridad del proceso
     print ("Algoritmo Prioridades : \n")
     lista = sorted(listaProcesos, key=attrgetter('prio', 'tarribo'))
-
+    t = lista[0].tarribo
+    procesador_ocupado = 0
+    print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     for x in range (0,len(lista)):
         z = lista[x]
-        print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+        tInicio = time.time()
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
         time.sleep (z.tprocesador)
         print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
+        tFinal = time.time()
+        tTurnaround = (int)(tFinal - tInicio)
+        if procesador_ocupado == 0:
+            tEsperaCola = 0
+        else:
+            tEsperaCola = t - z.tarribo
+        t += (tTurnaround)
+        tEsperaTotal = tEsperaCola
+        tRespuesta = t - z.tarribo 
+        tTotalUsoP = z.tprocesador
+        procesador_ocupado = 1
         print ('\n ---------------------------------------------------- \n')
-    #generarReporteProcesos(listaProcesosReporte)
+        listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
+    generarReporteProcesos(listaProcesosReporte)
 
 
 
@@ -109,19 +142,10 @@ def rr():
     print ("Algoritmo RR \n")
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)
 
-    ## ORDENACION POR TIEMPO DE ARRIBO
-
-    print("Orden de procesos por tarribo (segunda columna): ")
-    for x in range (0,len(lista)):
-        z =lista[x]
-        print(z.pid, z.tarribo, z.prio, z.tprocesador)
-
-    print("--deberia ser 3 1 6 7 9--")
-
     q = options.quantum
+    print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     while len(lista) != 0:
         z = lista.pop(0)
-        print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
         print ('El proceso ',z.pid ,'se esta ejecutando ... Tiene un tiempo de ',z.tprocesador, ' segundos')
         if q >= z.tprocesador:
             time.sleep (z.tprocesador)

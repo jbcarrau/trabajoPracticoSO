@@ -5,11 +5,14 @@ import operator # Libreria para utilizar itemgetter (funcion sorted())
 from time import sleep # funcion sleep
 from operator import itemgetter, attrgetter
 from optparse import OptionParser
+from queue import Queue
+
+q = Queue()
 
 usage = "usage: %prog [options] arg"
 parser = OptionParser(usage=usage)
 
-a_choices = ["fcfs", "sfj", "prioridades", "rr"]
+a_choices = ["fcfs", "sfj", "prioridades", "rr","rrthread"]
 parser.add_option("-a", "--algorithm",
                   action="store", type="choice", choices=a_choices, dest="name", 
                   help = "Define the scheduling method by picking an algorithm of your choice")
@@ -20,8 +23,8 @@ parser.add_option("-q", "--quantum",
 
 
                   
-# parser.add_option("-t", "--threads", 
-#                   action="store", type="int", dest="")
+parser.add_option("-t", "--threads", 
+                  type="int", dest="thr", help='specify number of threads')
 
 (options, args) = parser.parse_args()
 if len(args) != 0:
@@ -48,7 +51,7 @@ class Proceso:
 def fcfs(): #El primero que entra, el primero que sale. Se ejecuta el primero en llegar y los demas a medida que llegan estan en una cola.
     print ("\n Algoritmo FCFS \n")
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)
-    t = lista[0].tarribo
+    t = lista[0].tarribo #Tiempo actual
     procesador_ocupado = 0
     #print ('Son las : ', time.strftime("%H:%M:%S"), '\n') # Las lineas comentadas seria el uso del algoritmo a tiempo real
     tTurnaroundProm = 0
@@ -69,12 +72,11 @@ def fcfs(): #El primero que entra, el primero que sale. Se ejecuta el primero en
         #time.sleep (z.tprocesador)
         print ('El proceso ',z.pid, 'termino su ejecucion') # a las', time.strftime("%H:%M:%S"))
         #tFinal = time.time()
-        #tTurnaround = (int)(tFinal - tInicio)
         if (z.tprocesador >= 1000):
             trabajos1000 += 1
-        tTurnaround = z.tprocesador
+        t += (z.tprocesador)
+        tTurnaround = t - z.tarribo
         tTurnaroundProm += tTurnaround
-        t += (tTurnaround)
         tEsperaTotal = tEsperaCola # No se utilizan I/O entonces los datos que necesitan finalizacion de I/O es hasta finalizacion de proceso
         tEsperaTotalProcesos += tEsperaTotal
         tRespuesta = t - z.tarribo # finalizacion primer I/O - tiempo de arribo // => finalizacion proceso - tiempo de arribo
@@ -116,10 +118,9 @@ def sfj(): #Tiene prioridad el de ciclo de CPU mas corto
         if (z.tprocesador >= 1000):
             trabajos1000 += 1
         #tFinal = time.time()
-        #tTurnaround = (int)(tFinal - tInicio)
-        tTurnaround = z.tprocesador
+        t += (z.tprocesador)
+        tTurnaround = t - z.tarribo
         tTurnaroundProm += tTurnaround
-        t += (tTurnaround)
         tEsperaTotal = tEsperaCola
         tEsperaTotalProcesos += tEsperaTotal
         tRespuesta = t - z.tarribo 
@@ -165,12 +166,11 @@ def prioridades(): # Se ordena por prioridad del proceso
         #time.sleep (z.tprocesador)
         print ('El proceso ',z.pid, 'termino su ejecucion')# a las', time.strftime("%H:%M:%S"))
         #tFinal = time.time()
-        #tTurnaround = (int)(tFinal - tInicio)
         if (z.tprocesador >= 1000):
             trabajos1000 += 1
-        tTurnaround =z.tprocesador
+        t += (z.tprocesador)
+        tTurnaround = t - z.tarribo
         tTurnaroundProm += tTurnaround
-        t += (tTurnaround)
         tEsperaTotal = tEsperaCola
         tEsperaTotalProcesos += tEsperaTotal
         tRespuesta = t - z.tarribo 
@@ -203,31 +203,58 @@ def rr():
         print ('El proceso ',z.pid ,'se esta ejecutando ... Tiene un tiempo de ',z.tprocesador, ' segundos')
         if q >= z.tprocesador:
             z.tprocesador = 0
+            t + = z.tprocesador
             #time.sleep (z.tprocesador)
             print ('El proceso ',z.pid, ' termino su ejecucion ')#... a las ', time.strftime("%H:%M:%S") )
         else:
             #time.sleep (q)
             z.tprocesador -=  q
+            t + = q
             lista.append(z)
             print ('El proceso ', z.pid , 'Le queda ',z.tprocesador, ' segundos') 
         print ('\n ---------------------------------------------------- \n')
-     #   if (z.tprocesador == 0):
-      #      if procesador_ocupado == 0:
-       #         tEsperaCola = 0
-        #        procesador_ocupado = 1
-         #   else:
-          #      tEsperaCola = t - z.tarribo
-           # tTurnaround = z.tprocesador
-            #t += (tTurnaround)
-            #tEsperaTotal = tEsperaCola
-            #tRespuesta = t - z.tarribo 
-            #tTotalUsoP = z.tprocesador
-        #listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
-    #generarReporteProcesos(listaProcesosReporte)
+    tTurnaroundProm = tTurnaroundProm/n
+    tRespuestaProm = tRespuestaProm/n
+    if (trabajos1000 >= 1):
+        trabajos1000 = trabajos1000/n
+    listaSistema.append ([tTurnaroundProm,tEsperaTotalProcesos,tRespuestaProm,trabajos1000,0])
+    generarReporteProcesos(listaProcesosReporte)
+    generarReporteSistema(listaSistema)
     
 # Funcion Hilos (RR)
+def threadScan(thr):
+    for p in range(thr):
+        t = threading.Thread(target=threader, daemon=True).start()
+   #Pongo en la queue los procesos que serian los jobs que van a ejecutar los threads
+    lista = sorted(listaProcesos, key=lambda m:m.tarribo)
+    for x in range(0,len(lista)):
+        q.put(lista[x])
+    q.join()
 
+def threader():
+    while True:
+        z = q.get()
+        rrThread(z)
+        q.task_done()
 
+def rrThread(z):
+    print_lock = threading.Lock()
+    # print("--deberia ser 3 1 6 7 9--")
+    quantum = options.quantum
+    # while q.full():
+        # z = q.get()
+    #print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+    print ('El proceso ',z.pid ,'se esta ejecutando ... Tiene un tiempo de ',z.tprocesador, ' segundos')
+    if quantum >= z.tprocesador:
+        #time.sleep (z.tprocesador)
+        z.tprocesador = 0
+        print ('El proceso ',z.pid, ' termino su ejecucion')# ... a las ', time.strftime("%H:%M:%S") )
+    else:
+        #time.sleep (quantum)
+        z.tprocesador -=  quantum
+        q.put(z)
+        print ('El proceso ', z.pid , 'Le queda ',z.tprocesador, ' segundos') 
+    print ('\n ---------------------------------------------------- \n')
 
 # Funciones de los reportes
 
@@ -301,6 +328,8 @@ listaSistema = []
 
 cargaProcesos()
 
+thr = options.thr
+
 if options.name == "fcfs":
     fcfs()
 elif options.name == "sfj":
@@ -309,3 +338,12 @@ elif options.name == "prioridades":
     prioridades()
 elif options.name == "rr":
     rr()
+elif options.name == "rrthread":
+    if options.thr is None:
+        thr = 5
+    else:
+        thr = options.thr
+    print ("Algoritmo RR con hilos\n")
+    print ("Se utilizan ",thr , " Hilo/s \n")
+    threadScan(thr)
+    

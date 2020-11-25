@@ -51,11 +51,11 @@ def fcfs(): #El primero que entra, el primero que sale. Se ejecuta el primero en
     t = lista[0].tarribo
     procesador_ocupado = 0
     #print ('Son las : ', time.strftime("%H:%M:%S"), '\n') # Las lineas comentadas seria el uso del algoritmo a tiempo real
-    n = len(lista)
     tTurnaroundProm = 0
     tEsperaTotalProcesos = 0
     tRespuestaProm = 0
     trabajos1000 = 0
+    n = len(lista)
     for x in range (0,n):
         z = lista[x]
         if procesador_ocupado == 0:
@@ -195,7 +195,7 @@ def rr():
     print ("Algoritmo RR \n")
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)
     q = options.quantum
-    print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+    #print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     t = lista[0].tarribo
     procesador_ocupado = 0 # 1 ocupado 0 desocupado
     while len(lista) != 0:

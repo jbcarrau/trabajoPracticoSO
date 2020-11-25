@@ -50,35 +50,52 @@ def fcfs(): #El primero que entra, el primero que sale. Se ejecuta el primero en
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)
     t = lista[0].tarribo
     procesador_ocupado = 0
-    print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
-    for x in range (0,len(lista)):
+    #print ('Son las : ', time.strftime("%H:%M:%S"), '\n') # Las lineas comentadas seria el uso del algoritmo a tiempo real
+    n = len(lista)
+    tTurnaroundProm = 0
+    tEsperaTotalProcesos = 0
+    tRespuestaProm = 0
+    trabajos1000 = 0
+    for x in range (0,n):
         z = lista[x]
         if procesador_ocupado == 0:
             tEsperaCola = 0
         else:
             tEsperaCola = t - z.tarribo
         procesador_ocupado = 1
-        tInicio = time.time()
+        #tInicio = time.time()
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
-        time.sleep (z.tprocesador)
-        print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
-        tFinal = time.time()
-        tTurnaround = (int)(tFinal - tInicio)
+        #time.sleep (z.tprocesador)
+        print ('El proceso ',z.pid, 'termino su ejecucion') # a las', time.strftime("%H:%M:%S"))
+        #tFinal = time.time()
+        #tTurnaround = (int)(tFinal - tInicio)
+        if (z.tprocesador >= 1000):
+            trabajos1000 += 1
+        tTurnaround = z.tprocesador
+        tTurnaroundProm += tTurnaround
         t += (tTurnaround)
         tEsperaTotal = tEsperaCola # No se utilizan I/O entonces los datos que necesitan finalizacion de I/O es hasta finalizacion de proceso
+        tEsperaTotalProcesos += tEsperaCola
         tRespuesta = t - z.tarribo # finalizacion primer I/O - tiempo de arribo // => finalizacion proceso - tiempo de arribo
+        tRespuestaProm += tRespuesta
         tTotalUsoP = z.tprocesador # El tiempo total que el proceso tomo uso del procesador
         print ('\n ---------------------------------------------------- \n')
         listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
+    tTurnaroundProm = tTurnaroundProm/n
+    tRespuestaProm = tRespuestaProm/n
+    if (trabajos1000 >= 1):
+        trabajos1000 = trabajos1000/n
+    listaSistema.append ([tTurnaroundProm,tEsperaTotalProcesos,tRespuestaProm,trabajos1000,0])
     generarReporteProcesos(listaProcesosReporte)
+    generarReporteSistema(listaSistema)
 
 def sfj(): #Tiene prioridad el de ciclo de CPU mas corto
     print ("\n Algoritmo SFJ \n")
     lista = sorted(listaProcesos, key=attrgetter('tarribo', 'tprocesador'))
     t = lista[0].tarribo
     procesador_ocupado = 0
-    print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+    #print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     while len(lista) != 0:
         z = lista.pop(0)
         if procesador_ocupado == 0:
@@ -86,13 +103,14 @@ def sfj(): #Tiene prioridad el de ciclo de CPU mas corto
         else:
             tEsperaCola = t - z.tarribo
         procesador_ocupado = 1
-        tInicio = time.time()
+        #tInicio = time.time()
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
-        time.sleep (z.tprocesador)
-        print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
-        tFinal = time.time()
-        tTurnaround = (int)(tFinal - tInicio)
+        #time.sleep (z.tprocesador)
+        print ('El proceso ',z.pid, 'termino su ejecucion')# a las', time.strftime("%H:%M:%S"))
+        #tFinal = time.time()
+        #tTurnaround = (int)(tFinal - tInicio)
+        tTurnaround = z.tprocesador
         t += (tTurnaround)
         tEsperaTotal = tEsperaCola
         tRespuesta = t - z.tarribo 
@@ -112,7 +130,7 @@ def prioridades(): # Se ordena por prioridad del proceso
     lista = sorted(listaProcesos, key=attrgetter('tarribo', 'prio'))
     t = lista[0].tarribo
     procesador_ocupado = 0 # 1 ocupado 0 desocupado
-    print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+    #print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     while len(lista) != 0:
         z = lista.pop(0)
         tInicio = time.time()
@@ -123,10 +141,11 @@ def prioridades(): # Se ordena por prioridad del proceso
         procesador_ocupado = 1
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
-        time.sleep (z.tprocesador)
-        print ('El proceso ',z.pid, 'termino su ejecucion a las', time.strftime("%H:%M:%S"))
-        tFinal = time.time()
-        tTurnaround = (int)(tFinal - tInicio)
+        #time.sleep (z.tprocesador)
+        print ('El proceso ',z.pid, 'termino su ejecucion')# a las', time.strftime("%H:%M:%S"))
+        #tFinal = time.time()
+        #tTurnaround = (int)(tFinal - tInicio)
+        tTurnaround =z.tprocesador
         t += (tTurnaround)
         tEsperaTotal = tEsperaCola
         tRespuesta = t - z.tarribo 
@@ -143,21 +162,35 @@ def prioridades(): # Se ordena por prioridad del proceso
 def rr():
     print ("Algoritmo RR \n")
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)
-
     q = options.quantum
     print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+    t = lista[0].tarribo
+    procesador_ocupado = 0 # 1 ocupado 0 desocupado
     while len(lista) != 0:
         z = lista.pop(0)
         print ('El proceso ',z.pid ,'se esta ejecutando ... Tiene un tiempo de ',z.tprocesador, ' segundos')
         if q >= z.tprocesador:
-            time.sleep (z.tprocesador)
-            print ('El proceso ',z.pid, ' termino su ejecucion ... a las ', time.strftime("%H:%M:%S") )
+            z.tprocesador = 0
+            #time.sleep (z.tprocesador)
+            print ('El proceso ',z.pid, ' termino su ejecucion ')#... a las ', time.strftime("%H:%M:%S") )
         else:
-            time.sleep (q)
+            #time.sleep (q)
             z.tprocesador -=  q
             lista.append(z)
             print ('El proceso ', z.pid , 'Le queda ',z.tprocesador, ' segundos') 
         print ('\n ---------------------------------------------------- \n')
+     #   if (z.tprocesador == 0):
+      #      if procesador_ocupado == 0:
+       #         tEsperaCola = 0
+        #        procesador_ocupado = 1
+         #   else:
+          #      tEsperaCola = t - z.tarribo
+           # tTurnaround = z.tprocesador
+            #t += (tTurnaround)
+            #tEsperaTotal = tEsperaCola
+            #tRespuesta = t - z.tarribo 
+            #tTotalUsoP = z.tprocesador
+        #listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
     #generarReporteProcesos(listaProcesosReporte)
     
 # Funcion Hilos (RR)
@@ -170,7 +203,9 @@ def generarReporteProcesos(listar):
     if (len(listar) != 0):
         file = open("../TrabajoPracticoSO/reporteProcesos.txt", "w")
         file.write(" PID Proceso ||| Tiempo de Turnaround ||| Tiempo de espera en cola de listos ||| Tiempo de espera Total de cada proceso ||| Tiempo de Respuesta ||| Tiempo Total de uso de procesador \n")
+        print (" PID Proceso |||", "Tiempo de Turnaround |||", "Tiempo de espera en cola de listos |||", "Tiempo de espera Total de cada proceso |||", "Tiempo de Respuesta |||", "Tiempo Total de uso de procesador")
         for x in range (0,len(listar)):
+            print ("  ", listar[x][0],"\t\t\t", listar[x][1],"\t\t\t\t", listar[x][2],"\t\t\t\t\t", listar[x][3],"\t\t\t\t  ", listar[x][4],"\t\t\t\t", listar[x][5],"\n")
             file.write ("\t")
             file.write(str(listar[x][0]))
             file.write ("\t\t\t")
@@ -183,6 +218,26 @@ def generarReporteProcesos(listar):
             file.write(str(listar[x][4]))
             file.write ("\t\t\t\t")
             file.write(str(listar[x][5]))
+            file.write ("\n")
+        file.close()
+    else:
+        print ("No hay datos")
+
+def generarReporteSistema(listar):
+    if (len(listar) != 0):
+        file = open("../TrabajoPracticoSO/reporteSistema.txt", "w")
+        file.write("Tiempo de Turnaround Promedio ||| Tiempo de espera Total de los procesos ||| Tiempo de Respuesta Promedio ||| Cantidad Promedio trabajos realizados cada 1000 seg ||| Cantidad thread utilizados\n")
+        for x in range (0,len(listar)):
+            file.write ("\t")
+            file.write(str(listar[x][0]))
+            file.write ("\t\t\t\t\t")
+            file.write(str(listar[x][1]))
+            file.write ("\t\t\t\t\t")
+            file.write(str(listar[x][2]))
+            file.write ("\t\t\t\t\t")
+            file.write(str(listar[x][3]))
+            file.write ("\t\t\t\t\t\t")
+            file.write(str(listar[x][4]))
             file.write ("\n")
         file.close()
     else:
@@ -210,6 +265,7 @@ def cargaProcesos():
 
 listaProcesos = []
 listaProcesosReporte = []
+listaSistema = []
 
 cargaProcesos()
 

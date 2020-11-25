@@ -198,18 +198,28 @@ def rr():
     #print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     t = lista[0].tarribo
     procesador_ocupado = 0 # 1 ocupado 0 desocupado
+    tTurnaroundProm = 0
+    trabajos1000 = 0
+    n = len(lista)
     while len(lista) != 0:
         z = lista.pop(0)
         print ('El proceso ',z.pid ,'se esta ejecutando ... Tiene un tiempo de ',z.tprocesador, ' segundos')
+        if (z.tprocesador >= 1000):
+            trabajos1000 += 1
         if q >= z.tprocesador:
+            t += z.tprocesador
             z.tprocesador = 0
-            t + = z.tprocesador
             #time.sleep (z.tprocesador)
             print ('El proceso ',z.pid, ' termino su ejecucion ')#... a las ', time.strftime("%H:%M:%S") )
+            tTurnaround = t - z.tarribo
+            tTurnaroundProm += tTurnaround
+            tRespuesta = t - z.tarribo 
+            tRespuestaProm += tRespuesta
+            #listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
         else:
             #time.sleep (q)
             z.tprocesador -=  q
-            t + = q
+            t += q
             lista.append(z)
             print ('El proceso ', z.pid , 'Le queda ',z.tprocesador, ' segundos') 
         print ('\n ---------------------------------------------------- \n')

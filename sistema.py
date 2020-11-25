@@ -192,13 +192,13 @@ def prioridades(): # Se ordena por prioridad del proceso
     generarReporteSistema(listaSistema)
 
 def rr():
-    print ("Algoritmo RR \n")
     lista = sorted(listaProcesos, key=lambda m:m.tarribo)
     q = options.quantum
     #print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     t = lista[0].tarribo
     procesador_ocupado = 0 # 1 ocupado 0 desocupado
     tTurnaroundProm = 0
+    tRespuestaProm = 0
     trabajos1000 = 0
     n = len(lista)
     while len(lista) != 0:
@@ -227,9 +227,9 @@ def rr():
     tRespuestaProm = tRespuestaProm/n
     if (trabajos1000 >= 1):
         trabajos1000 = trabajos1000/n
-    listaSistema.append ([tTurnaroundProm,tEsperaTotalProcesos,tRespuestaProm,trabajos1000,0])
-    generarReporteProcesos(listaProcesosReporte)
-    generarReporteSistema(listaSistema)
+    #listaSistema.append ([tTurnaroundProm,tEsperaTotalProcesos,tRespuestaProm,trabajos1000,0])
+    #generarReporteProcesos(listaProcesosReporte)
+    #generarReporteSistema(listaSistema)
     
 # Funcion Hilos (RR)
 def threadScan(thr):
@@ -347,13 +347,20 @@ elif options.name == "sfj":
 elif options.name == "prioridades":
     prioridades()
 elif options.name == "rr":
+    print ("Algoritmo RR \n")
+    if options.quantum is None:
+        options.quantum = 2
+    print ("QUANTUM : ",options.quantum, "\n")
     rr()
 elif options.name == "rrthread":
+    if options.quantum is None:
+        options.quantum = 2
     if options.thr is None:
         thr = 5
     else:
         thr = options.thr
     print ("Algoritmo RR con hilos\n")
+    print ("QUANTUM : ",options.quantum, "\n")
     print ("Se utilizan ",thr , " Hilo/s \n")
     threadScan(thr)
     

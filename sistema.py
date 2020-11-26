@@ -6,8 +6,7 @@ from time import sleep # funcion sleep
 from operator import itemgetter, attrgetter
 from optparse import OptionParser
 from queue import Queue
-
-q = Queue()
+from time import process_time
 
 usage = "usage: %prog [options] arg"
 parser = OptionParser(usage=usage)
@@ -21,8 +20,7 @@ parser.add_option("-q", "--quantum",
                   action="store", type="int", dest="quantum", 
                   help = "Execution Quantum time. Choose wiseley")
 
-
-                  
+              
 parser.add_option("-t", "--threads", 
                   type="int", dest="thr", help='specify number of threads')
 
@@ -254,49 +252,48 @@ def threader():
         q.task_done()
 
 def rrThread(z):
-    print_lock = threading.Lock()
     quantum = options.quantum
     lista = sorted(listaProcesos, key=attrgetter('tarribo', 'prio'))
-    # while q.full():
-        # z = q.get()
-    tTurnaroundProm = 0
-    tEsperaTotalProcesos = 0
-    tRespuestaProm = 0
-    n = len(lista)
-    global tiempoRRHilos
-    global trabajos1000hilos
-    print ('El proceso ',z.pid ,'se esta ejecutando ... Tiene un tiempo de ',z.tprocesador, ' segundos')
-    if quantum >= z.tprocesador:
-        tiempoRRHilos += z.tprocesador
-        #time.sleep (z.tprocesador)
-        print ('El proceso ',z.pid, ' termino su ejecucion ')#... a las ', time.strftime("%H:%M:%S") )
-        tTurnaround = tiempoRRHilos - z.tarribo
-        tTurnaroundProm += tTurnaround
-        tRespuesta = tiempoRRHilos - z.tarribo 
-        tRespuestaProm += tRespuesta
-        tEsperaCola =  tTurnaround - z.tprocesador
-        tEsperaTotal = tEsperaCola
-        tEsperaTotalProcesos += tEsperaTotal
-        z.tprocesador = 0
-        for i in range (0,len(aux)):
-            if(aux[i][0] == z.pid):
-                tTotalUsoP = aux[i][1]
-        listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
-    else:
-        #time.sleep (quantum)
-        z.tprocesador -=  quantum
-        tiempoRRHilos += quantum
-        q.put(z)
-        print ('El proceso ', z.pid , 'Le queda ',z.tprocesador, ' segundos') 
-    print ('\n ---------------------------------------------------- \n')
-    if (q.empty()):
-        tTurnaroundProm = tTurnaroundProm/n
-        tRespuestaProm = tRespuestaProm/n
-        if (trabajos1000hilos >= 1):
-            trabajos1000hilos = trabajos1000hilos/n
-        listaSistema.append ([tTurnaroundProm,tEsperaTotalProcesos,tRespuestaProm,trabajos1000hilos,thr])
-        generarReporteProcesos(listaProcesosReporte)
-        generarReporteSistema(listaSistema)
+    
+    with lock:
+        tTurnaroundProm = 0
+        tEsperaTotalProcesos = 0
+        tRespuestaProm = 0
+        n = len(lista)
+        global tiempoRRHilos
+        global trabajos1000hilos
+        print ('El proceso ',z.pid ,'se esta ejecutando ... Tiene un tiempo de ',z.tprocesador, ' segundos')
+        if quantum >= z.tprocesador:
+            tiempoRRHilos += z.tprocesador
+            #time.sleep (z.tprocesador)
+            print ('El proceso ',z.pid, ' termino su ejecucion ')#... a las ', time.strftime("%H:%M:%S") )
+            tTurnaround = tiempoRRHilos - z.tarribo
+            tTurnaroundProm += tTurnaround
+            tRespuesta = tiempoRRHilos - z.tarribo 
+            tRespuestaProm += tRespuesta
+            tEsperaCola =  tTurnaround - z.tprocesador
+            tEsperaTotal = tEsperaCola
+            tEsperaTotalProcesos += tEsperaTotal
+            z.tprocesador = 0
+            for i in range (0,len(aux)):
+                if(aux[i][0] == z.pid):
+                    tTotalUsoP = aux[i][1]
+            listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
+        else:
+            #time.sleep (quantum)
+            z.tprocesador -=  quantum
+            tiempoRRHilos += quantum
+            q.put(z)
+            print ('El proceso ', z.pid , 'Le queda ',z.tprocesador, ' segundos') 
+        print ('\n ---------------------------------------------------- \n')
+        if (q.empty()):
+            tTurnaroundProm = tTurnaroundProm/n
+            tRespuestaProm = tRespuestaProm/n
+            if (trabajos1000hilos >= 1):
+                trabajos1000hilos = trabajos1000hilos/n
+            listaSistema.append ([tTurnaroundProm,tEsperaTotalProcesos,tRespuestaProm,trabajos1000hilos,thr])
+            generarReporteProcesos(listaProcesosReporte)
+            generarReporteSistema(listaSistema)
 
 # Funciones de los reportes
 
@@ -370,6 +367,8 @@ listaSistema = []
 aux = []
 
 cargaProcesos()
+lock = threading.Lock()
+q = Queue()
 global tiempoRRHilos
 global trabajos1000hilos
 trabajos1000hilos = 0
@@ -387,6 +386,7 @@ elif options.name == "rr":
         options.quantum = 2
     print ("QUANTUM : ",options.quantum, "\n")
     rr()
+
 elif options.name == "rrthread":
     if options.quantum is None:
         options.quantum = 2

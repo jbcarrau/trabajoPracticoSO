@@ -1,2 +1,0 @@
-Tiempo de Turnaround Promedio ||| Tiempo de espera Total de los procesos ||| Tiempo de Respuesta Promedio ||| Cantidad Promedio trabajos realizados cada 1000 seg ||| Cantidad thread utilizados
-	4.6					22					4.6					0						5

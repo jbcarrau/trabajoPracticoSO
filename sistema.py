@@ -50,9 +50,8 @@ class Proceso:
 # Funciones de los algoritmos (Procesos) funcionan a tiempo real
 def fcfs(): #El primero que entra, el primero que sale. Se ejecuta el primero en llegar y los demas a medida que llegan estan en una cola.
     print ("\n Algoritmo FCFS \n")
-    lista = sorted(listaProcesos, key=lambda m:m.tarribo)
+    lista = sorted(listaProcesos, key=attrgetter('tarribo', 'prio'))
     t = lista[0].tarribo #Tiempo actual
-    procesador_ocupado = 0
     #print ('Son las : ', time.strftime("%H:%M:%S"), '\n') # Las lineas comentadas seria el uso del algoritmo a tiempo real
     tTurnaroundProm = 0
     tEsperaTotalProcesos = 0
@@ -61,11 +60,6 @@ def fcfs(): #El primero que entra, el primero que sale. Se ejecuta el primero en
     n = len(lista)
     for x in range (0,n):
         z = lista[x]
-        if procesador_ocupado == 0:
-            tEsperaCola = 0
-        else:
-            tEsperaCola = t - z.tarribo
-        procesador_ocupado = 1
         #tInicio = time.time()
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
@@ -76,10 +70,11 @@ def fcfs(): #El primero que entra, el primero que sale. Se ejecuta el primero en
             trabajos1000 += 1
         t += (z.tprocesador)
         tTurnaround = t - z.tarribo
+        tEsperaCola = tTurnaround - z.tprocesador
         tTurnaroundProm += tTurnaround
-        tEsperaTotal = tEsperaCola # No se utilizan I/O entonces los datos que necesitan finalizacion de I/O es hasta finalizacion de proceso
+        tEsperaTotal = tEsperaCola # No se utilizan I/O entonces los datos que necesitan finalizacion de I/O es hasta finalizacion de proceso => Tturnaround - tiempo CPU
         tEsperaTotalProcesos += tEsperaTotal
-        tRespuesta = t - z.tarribo # finalizacion primer I/O - tiempo de arribo // => finalizacion proceso - tiempo de arribo
+        tRespuesta = t - z.tarribo # finalizacion primer I/O - tiempo de arribo // => finalizacion proceso - tiempo de arribo => Es igual al turnaround
         tRespuestaProm += tRespuesta
         tTotalUsoP = z.tprocesador # El tiempo total que el proceso tomo uso del procesador
         print ('\n ---------------------------------------------------- \n')
@@ -96,7 +91,6 @@ def sfj(): #Tiene prioridad el de ciclo de CPU mas corto
     print ("\n Algoritmo SFJ \n")
     lista = sorted(listaProcesos, key=attrgetter('tarribo', 'tprocesador'))
     t = lista[0].tarribo
-    procesador_ocupado = 0
     #print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     tTurnaroundProm = 0
     tEsperaTotalProcesos = 0
@@ -105,11 +99,6 @@ def sfj(): #Tiene prioridad el de ciclo de CPU mas corto
     n = len(lista)
     while len(lista) != 0:
         z = lista.pop(0)
-        if procesador_ocupado == 0:
-            tEsperaCola = 0
-        else:
-            tEsperaCola = t - z.tarribo
-        procesador_ocupado = 1
         #tInicio = time.time()
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
@@ -120,6 +109,7 @@ def sfj(): #Tiene prioridad el de ciclo de CPU mas corto
         #tFinal = time.time()
         t += (z.tprocesador)
         tTurnaround = t - z.tarribo
+        tEsperaCola = tTurnaround - z.tprocesador
         tTurnaroundProm += tTurnaround
         tEsperaTotal = tEsperaCola
         tEsperaTotalProcesos += tEsperaTotal
@@ -146,7 +136,6 @@ def prioridades(): # Se ordena por prioridad del proceso
     print ("\n Algoritmo Prioridades : \n")
     lista = sorted(listaProcesos, key=attrgetter('tarribo', 'prio'))
     t = lista[0].tarribo
-    procesador_ocupado = 0 # 1 ocupado 0 desocupado
     #print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     tTurnaroundProm = 0
     tEsperaTotalProcesos = 0
@@ -156,11 +145,7 @@ def prioridades(): # Se ordena por prioridad del proceso
     while len(lista) != 0:
         z = lista.pop(0)
         tInicio = time.time()
-        if procesador_ocupado == 0:
-            tEsperaCola = 0
-        else:
-            tEsperaCola = t - z.tarribo
-        procesador_ocupado = 1
+        tEsperaCola = t - z.tarribo
         print ('El proceso ',z.pid ,'se esta ejecutando ...')
         print ()
         #time.sleep (z.tprocesador)
@@ -170,6 +155,7 @@ def prioridades(): # Se ordena por prioridad del proceso
             trabajos1000 += 1
         t += (z.tprocesador)
         tTurnaround = t - z.tarribo
+        tEsperaCola = tTurnaround - z.tprocesador
         tTurnaroundProm += tTurnaround
         tEsperaTotal = tEsperaCola
         tEsperaTotalProcesos += tEsperaTotal
@@ -192,30 +178,41 @@ def prioridades(): # Se ordena por prioridad del proceso
     generarReporteSistema(listaSistema)
 
 def rr():
-    lista = sorted(listaProcesos, key=lambda m:m.tarribo)
+    lista = sorted(listaProcesos, key=attrgetter('tarribo', 'prio'))
     q = options.quantum
+    aux = []
     #print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
     t = lista[0].tarribo
-    procesador_ocupado = 0 # 1 ocupado 0 desocupado
     tTurnaroundProm = 0
+    tEsperaTotalProcesos = 0
     tRespuestaProm = 0
     trabajos1000 = 0
     n = len(lista)
+    for x in range (0,len(lista)):
+        z = lista.pop(0)
+        if (z.tprocesador >= 1000):
+            trabajos1000 += 1
+        aux.append([z.pid,z.tprocesador])
+        lista.append(z)
     while len(lista) != 0:
         z = lista.pop(0)
         print ('El proceso ',z.pid ,'se esta ejecutando ... Tiene un tiempo de ',z.tprocesador, ' segundos')
-        if (z.tprocesador >= 1000):
-            trabajos1000 += 1
         if q >= z.tprocesador:
             t += z.tprocesador
-            z.tprocesador = 0
             #time.sleep (z.tprocesador)
             print ('El proceso ',z.pid, ' termino su ejecucion ')#... a las ', time.strftime("%H:%M:%S") )
             tTurnaround = t - z.tarribo
             tTurnaroundProm += tTurnaround
             tRespuesta = t - z.tarribo 
             tRespuestaProm += tRespuesta
-            #listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
+            tEsperaCola =  tTurnaround - z.tprocesador
+            tEsperaTotal = tEsperaCola
+            tEsperaTotalProcesos += tEsperaTotal
+            z.tprocesador = 0
+            for i in range (0,len(aux)):
+                if(aux[i][0] == z.pid):
+                    tTotalUsoP = aux[i][1]
+            listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
         else:
             #time.sleep (q)
             z.tprocesador -=  q
@@ -227,16 +224,25 @@ def rr():
     tRespuestaProm = tRespuestaProm/n
     if (trabajos1000 >= 1):
         trabajos1000 = trabajos1000/n
-    #listaSistema.append ([tTurnaroundProm,tEsperaTotalProcesos,tRespuestaProm,trabajos1000,0])
-    #generarReporteProcesos(listaProcesosReporte)
-    #generarReporteSistema(listaSistema)
+    listaSistema.append ([tTurnaroundProm,tEsperaTotalProcesos,tRespuestaProm,trabajos1000,0])
+    generarReporteProcesos(listaProcesosReporte)
+    generarReporteSistema(listaSistema)
     
 # Funcion Hilos (RR)
 def threadScan(thr):
+    global tiempoRRHilos
+    global trabajos1000hilos
     for p in range(thr):
         t = threading.Thread(target=threader, daemon=True).start()
    #Pongo en la queue los procesos que serian los jobs que van a ejecutar los threads
-    lista = sorted(listaProcesos, key=lambda m:m.tarribo)
+    lista = sorted(listaProcesos, key=attrgetter('tarribo', 'prio'))
+    for x in range (0,len(lista)):
+        y = lista.pop(0)
+        if (y.tprocesador >= 1000):
+            trabajos1000hilos += 1
+        aux.append([y.pid,y.tprocesador])
+        lista.append(y)
+    tiempoRRHilos = lista[0].tarribo
     for x in range(0,len(lista)):
         q.put(lista[x])
     q.join()
@@ -249,22 +255,48 @@ def threader():
 
 def rrThread(z):
     print_lock = threading.Lock()
-    # print("--deberia ser 3 1 6 7 9--")
     quantum = options.quantum
+    lista = sorted(listaProcesos, key=attrgetter('tarribo', 'prio'))
     # while q.full():
         # z = q.get()
-    #print ('Son las : ', time.strftime("%H:%M:%S"), '\n')
+    tTurnaroundProm = 0
+    tEsperaTotalProcesos = 0
+    tRespuestaProm = 0
+    n = len(lista)
+    global tiempoRRHilos
+    global trabajos1000hilos
     print ('El proceso ',z.pid ,'se esta ejecutando ... Tiene un tiempo de ',z.tprocesador, ' segundos')
     if quantum >= z.tprocesador:
+        tiempoRRHilos += z.tprocesador
         #time.sleep (z.tprocesador)
+        print ('El proceso ',z.pid, ' termino su ejecucion ')#... a las ', time.strftime("%H:%M:%S") )
+        tTurnaround = tiempoRRHilos - z.tarribo
+        tTurnaroundProm += tTurnaround
+        tRespuesta = tiempoRRHilos - z.tarribo 
+        tRespuestaProm += tRespuesta
+        tEsperaCola =  tTurnaround - z.tprocesador
+        tEsperaTotal = tEsperaCola
+        tEsperaTotalProcesos += tEsperaTotal
         z.tprocesador = 0
-        print ('El proceso ',z.pid, ' termino su ejecucion')# ... a las ', time.strftime("%H:%M:%S") )
+        for i in range (0,len(aux)):
+            if(aux[i][0] == z.pid):
+                tTotalUsoP = aux[i][1]
+        listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
     else:
         #time.sleep (quantum)
         z.tprocesador -=  quantum
+        tiempoRRHilos += quantum
         q.put(z)
         print ('El proceso ', z.pid , 'Le queda ',z.tprocesador, ' segundos') 
     print ('\n ---------------------------------------------------- \n')
+    if (q.empty()):
+        tTurnaroundProm = tTurnaroundProm/n
+        tRespuestaProm = tRespuestaProm/n
+        if (trabajos1000hilos >= 1):
+            trabajos1000hilos = trabajos1000hilos/n
+        listaSistema.append ([tTurnaroundProm,tEsperaTotalProcesos,tRespuestaProm,trabajos1000hilos,thr])
+        generarReporteProcesos(listaProcesosReporte)
+        generarReporteSistema(listaSistema)
 
 # Funciones de los reportes
 
@@ -335,9 +367,12 @@ def cargaProcesos():
 listaProcesos = []
 listaProcesosReporte = []
 listaSistema = []
+aux = []
 
 cargaProcesos()
-
+global tiempoRRHilos
+global trabajos1000hilos
+trabajos1000hilos = 0
 thr = options.thr
 
 if options.name == "fcfs":

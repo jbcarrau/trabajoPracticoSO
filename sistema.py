@@ -279,6 +279,7 @@ def rrThread(z):
                 if(aux[i][0] == z.pid):
                     tTotalUsoP = aux[i][1]
             listaProcesosReporte.append([z.pid,tTurnaround,tEsperaCola,tEsperaTotal,tRespuesta,tTotalUsoP])
+            #q.task_done()
         else:
             #time.sleep (quantum)
             z.tprocesador -=  quantum
